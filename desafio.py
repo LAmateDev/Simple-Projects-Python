@@ -3,10 +3,10 @@ class Jogo():
         self.genero = genero
         self.preco = preco
         self.titulo = titulo
-        self.classificcao = classificacao
+        self.classificacao = classificacao
 
     def exibir_detalhes(self):
-        print(f"Título do jogo: {self.titulo}\nPreço: R${self.preco}\nGênero: {self.genero}\nClassificação: {self.classificcao}")
+        print(f"Título do jogo: {self.titulo}\nPreço: R${self.preco}\nGênero: {self.genero}\nClassificação: {self.classificacao}")
 
     
 class Jogador():
@@ -34,7 +34,7 @@ class Jogador():
 
     def debitar_saldo(self, debitar):
         self.debitar = debitar
-        if self.saldo > self.debitar:
+        if self.saldo >= self.debitar:
             self.saldo -= self.debitar
             print(f"Valor debitado com sucesso\nNovo saldo {self.saldo}")
         else: 
@@ -43,7 +43,7 @@ class Jogador():
     
     def comprar_jogo(self, jogo):
         if isinstance(jogo, Jogo):
-            if self.saldo > jogo.preco:
+            if self.saldo >= jogo.preco:
                 print(f"O Jogo {jogo.titulo} foi comprado com sucesso")
                 self.adicionar_jogo(jogo)
                 self.debitar_saldo(jogo.preco)
@@ -83,11 +83,39 @@ class Plataforma():
         for j in self.catalago_jogos:
             if j.titulo == self.titulo_jogo:
                 return j
-                j.exibir_detalhes()
+        
+        return None
+    
+    def buscar_jogador(self, id):
+        self.id = id
+        for y in self.jogadores_cadastrados:
+            if y.id == self.id:
+                return y
             
-                
+        return None
+    
+    def listar_jogos(self):
+        print("Catálogo de Jogos:")
+        for e in self.catalago_jogos:
+            e.exibir_detalhes()
+    
+    def realizar_compra(self, id_comprador, titulo_jogo_desejado):
+        jogador = self.buscar_jogador(id_comprador)
+        jogo = self.buscar_jogo(titulo_jogo_desejado)
 
+        if jogador is None:
+            print(f"Jogador com ID {id_comprador} não encontrado")
+            return
+        
+        if jogo is None:
+            print(f"o Jogo {titulo_jogo_desejado} não foi encontrado no catálogo")
+            return
+        jogador.comprar_jogo(jogo)
+       
+       
+        
 
+            
 
    
 jogo1 = Jogo("Dead cells", 50, "10+", "Rogue Like")  #Criando objeto
@@ -98,10 +126,22 @@ jogador1 = Jogador("SarahGames", "3473473", 200)  # Criando objeto jogador/usuar
 jogador1.ver_perfil()    # Mostra o perfil do jogador
 jogador1.comprar_jogo(jogo1)   #Compramos um jogo, o adicionamos na biblioteca e debitamos o valor do jogo do saldo atual do usuario
 jogador1.ver_perfil()  # Mostra o perfil com as atualizações feitas
-jogador1.adicionar_saldo(1000)   #adiciona saldo na carteira
+jogador1.adicionar_saldo(10)   #adiciona saldo na carteira
 jogador1.ver_perfil()     # Mostra o perfil com as atualizaçẽos feitas
 
 steam = Plataforma("steam")
 steam.adicionar_jogo_catalogo(jogo1)
 
+jogo2 = Jogo("Call of Duty Black Ops 2", 160, "+10", "Tiro")
+jogador1.comprar_jogo(jogo2)
+jogador1.ver_perfil()
 
+steam.adicionar_jogo_catalogo(jogo2)
+steam.adicionar_jogo_catalogo(jogo1)
+steam.adicionar_jogador(jogador1)
+print(steam.buscar_jogo("Call of Duty Black Ops 2"))
+
+print(steam.buscar_jogador("3473473"))
+steam.listar_jogos()
+jogador1.adicionar_saldo(1000)
+steam.realizar_compra("3473473", "Dead cells")
